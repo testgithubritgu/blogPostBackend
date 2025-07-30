@@ -111,3 +111,21 @@ exports.addcomments  =async (req,res)=>{
     res.status(404).json({"message":"not found", success:false})
   }
 }
+exports.deletecomments  =async (req,res)=>{
+    const name = req.user.name
+    const {id} = req.params
+
+    const idx = req.idx
+    console.log(idx)
+  try {
+      const getcomments = await blogModel.findById(req.params.id)
+    console.log(getcomments)
+    const commentidx = idx
+    getcomments.comments.splice(commentidx, 1);
+    await getcomments.save();
+    //  await getcomments.save()
+    res.status(200).json({message:"comment deleted",success:true})
+  } catch (error) {
+    res.status(404).json({"message":"not found", success:false})
+  }
+}
