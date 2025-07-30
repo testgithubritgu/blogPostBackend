@@ -18,7 +18,7 @@ router.put("/update/:id",authCheck,upload.single("file"),updateBlogs)
 router.delete("/delet/:id",authCheck,deletBlogs)
 router.get("/comments/:id",authCheck,getcomments)
 router.post("/addcomments/:id",authCheck,addcomments)
-router.delete("/deletcomments/:id",authCheck,deletecomments)
+router.delete("/deletcomments/:blogid/:id",authCheck,deletecomments)
 
 
 module.exports = router
