@@ -85,8 +85,29 @@ exports.deletBlogs = async (req, res) => {
     }
 }
 
-exports.getcomments  = (req,res)=>{
+
+exports.getcomments  =async (req,res)=>{
     const name = req.user.name
-    console.log(name)
-    res.status(200).json({message:"ok"})
+    const getcomments = await blogModel.findById(req.params.id)
+ 
+    try {
+        res.status(200).json({message:"ok",comment:getcomments.comments,date:getcomments.Date})
+    } catch (error) {
+        res.status(404).json({message:"not found",})
+    }
+}
+
+
+exports.addcomments  =async (req,res)=>{
+    const name = req.user.name
+    const {text} = req.body
+  try {
+      const getcomments = await blogModel.findById(req.params.id)
+    console.log(getcomments)
+     getcomments.comments.push({user:name,text})
+     await getcomments.save()
+    res.status(200).json({message:"ok",success:true})
+  } catch (error) {
+    res.status(404).json({"message":"not found", success:false})
+  }
 }
