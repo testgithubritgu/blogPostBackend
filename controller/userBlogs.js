@@ -52,20 +52,23 @@ exports.getBlogsById = async (req, res) => {
     }
 }
 exports.updateBlogs = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params 
+    console.log(id)
     try {
         const blogs = await blog.findById({ _id: id })
-        if (!blog) {
+      
+        if (!blogs) {
+           
             return res.status(404).json({ message: "not found", success: false })
-
         }
-        if (blogs.author.toString() !== req.user.id) {
-            return res.status(401).json({ message: "unauthorized", success: false })
-        }
+        // if (blogs.author !== req.user.id) {
+        //     return res.status(401).json({ message: "unauthorized", success: false })
+        // }
         blogs.title = req.body.title || blogs.title
         blogs.content = req.body.content || blogs.content
+        blogs.blogImage = req.file.filename || blogs.blogImage
         await blogs.save()
-        res.status(200).json({ message: "updated succesfully", success: true })
+       return  res.status(200).json({ message: "updated succesfully", success: true })
     } catch (error) {
         res.status(500).json({ err: error })
     }
@@ -80,4 +83,10 @@ exports.deletBlogs = async (req, res) => {
         return res.status(404).json({ message: "not found", success: false })
 
     }
+}
+
+exports.getcomments  = (req,res)=>{
+    const name = req.user.name
+    console.log(name)
+    res.status(200).json({message:"ok"})
 }

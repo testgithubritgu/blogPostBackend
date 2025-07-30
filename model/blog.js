@@ -21,6 +21,12 @@ const blogSchema =new mongoose.Schema({
 
     },
     blogImage:String,
+    comments:[
+        {user:String,text:String,Date:{
+            type:Date,
+            default:Date.now()
+        }}
+],
     authorName:String
 
 }, { timestamps: true })

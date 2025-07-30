@@ -4,7 +4,7 @@ exports.authCheck = async (req, res, next) => {
 
     const authToken = req.headers["authorization"]
     const token = authToken.split(' ')[1]
-    console.log(token);
+
     
     if (!token) {
         return res.status(404).json({ message: "no token provided" ,success:false })

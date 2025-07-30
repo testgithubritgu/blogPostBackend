@@ -11,7 +11,7 @@ exports.userLogin = async (req, res) => {
     if (!verifyPass) {
         return res.status(400).json({ message: "invalid credintial" })
     }
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY )
+    const token = jwt.sign({ id: user._id,name:user.name }, process.env.SECRET_KEY )
     res.status(200).json({ success: true, message: "Login succesfully", token,user })
 }
 exports.userRegister = async (req, res) => {
