@@ -53,7 +53,7 @@ exports.getBlogsById = async (req, res) => {
 }
 exports.updateBlogs = async (req, res) => {
     const { id } = req.params
-    console.log(id)
+ 
     try {
         const blogs = await blog.findById({ _id: id })
 
@@ -103,7 +103,7 @@ exports.addcomments = async (req, res) => {
     const { text } = req.body
     try {
         const getcomments = await blogModel.findById(req.params.id)
-        console.log(getcomments)
+  
         getcomments.comments.push({ user: name, text })
         await getcomments.save()
         res.status(200).json({ message: "ok", success: true })
@@ -116,10 +116,10 @@ exports.deletecomments = async (req, res) => {
     const { id,blogid } = req.params
 
     const idx = req.idx
-    console.log(idx)
+ 
     try {
         const getcomments = await blogModel.findById(blogid)
-        console.log(getcomments)
+       
         const commentidx = idx
         getcomments.comments.splice(id, 1);
         await getcomments.save();
