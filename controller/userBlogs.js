@@ -30,7 +30,7 @@ exports.createBlog = async (req, res) => {
         res.status(200).json({ message: "post created succesfully", success: true })
 
     } catch (error) {
-        res.json({ err: error })
+        res.status(500).json({ err: error })
     }
 }
 
