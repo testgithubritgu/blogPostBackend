@@ -5,14 +5,14 @@ exports.userLogin = async (req, res) => {
     const {  email, password } = req.body
     const user = await userModel.findOne({ email })
     if (!user) {
-        return res.status(500).json({ message: "user not found" })
+        return res.status(404).json({ message: "user not found" })
     }
     const verifyPass = await bcrypt.compare(password, user.password)
     if (!verifyPass) {
         return res.status(400).json({ message: "invalid credintial" })
     }
-    const token = jwt.sign({ id: user._id,name:user.name }, process.env.SECRET_KEY )
-    res.status(200).json({ success: true, message: "Login succesfully", token,user })
+    const token = jwt.sign({ id: user._id,name:user.name,role:user.role }, process.env.SECRET_KEY )
+    res.status(200).json({ success: true, message: "Login succesfully", token,user,isAdmin:user.role === "admin"?true:false })
 }
 exports.userRegister = async (req, res) => {
     const { name, email, password } = req.body

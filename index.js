@@ -17,6 +17,8 @@ app.use("/auth", userrouter)
 app.use("/blog",blogRouter)
 
 
+//routes for like
+
 
 connectDb().then(()=>{
     app.listen(port,()=>{

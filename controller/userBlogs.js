@@ -1,14 +1,15 @@
 const blog = require("../model/blog")
 const blogModel = require("../model/blog")
 const userModel = require("../model/user")
+const likeModel = require("../model/like")
 const multer = require('multer')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './public/images')
     },
     filename: function (req, file, cb) {
-        const filename = Date.now() + '-' + file.originalname
-        cb(null, filename)
+        const filenam = Date.now() + '-' + file.originalname
+        cb(null, filenam)
     }
 })
 
@@ -16,7 +17,7 @@ exports.upload = multer({ storage: storage })
 
 exports.createBlog = async (req, res) => {
     const { title, content } = req.body
-
+   
     const author = req.user.id
     const user = await userModel.findById({ _id: author })
     try {
@@ -24,6 +25,10 @@ exports.createBlog = async (req, res) => {
             title, content, author, authorName: user.name, blogImage: req.file.filename
 
         })
+        const newLikeModel = await likeModel.create({
+            blogId:newBloge._id
+        })
+
         user.myBlogs.push(newBloge._id)
         await user.save()
 
@@ -64,10 +69,12 @@ exports.updateBlogs = async (req, res) => {
         // if (blogs.author !== req.user.id) {
         //     return res.status(401).json({ message: "unauthorized", success: false })
         // }
+      
         blogs.title = req.body.title || blogs.title
         blogs.content = req.body.content || blogs.content
         blogs.blogImage = req.file.filename || blogs.blogImage
         await blogs.save()
+      
         return res.status(200).json({ message: "updated succesfully", success: true })
     } catch (error) {
         res.status(500).json({ err: error })
