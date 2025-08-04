@@ -31,5 +31,13 @@ router.put("/put/:id",authCheck,addLike)
 
 //routes for history
 router.get("/history/:id",gethistory)
+router.post("/allroutes",authCheck,logger,(req,res)=>{
+    return res.status(200).json({message:"ok"})
+})
+
+
+
+
+
 
 module.exports = router
