@@ -8,6 +8,7 @@ const usersHistorySchema = new mongoose.Schema({
       type: String,
       required: true
     },
+   
     date: {
       type: Number,
       required: true

@@ -4,7 +4,7 @@ const historymodel = require("../model/history")
 exports.logger = async (req,res,next)=>{
 
     const date = new Date()
-    console.log(date.getDay(),date.getFullYear(),date.getMinutes(),date.getMonth()+1)
+
     const {id} =req.user
     const visiturl =  req.body.requrl
     try {
@@ -18,10 +18,15 @@ exports.logger = async (req,res,next)=>{
         "friday",
         "saturday"
       ]
+      const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
       const logHistory = {
         visitedURL:visiturl,
         date:date.getDate(),
-        minAndHr: `${date.getHours()}:${date.getMinutes()}`,
+   
+        minAndHr: `${date.getHours()}:${date.getMinutes()} ${date.getHours < 12?"AM":"PM"}`,
         year:date.getFullYear(),
         day:days[date.getDay()]
         
@@ -36,12 +41,13 @@ exports.logger = async (req,res,next)=>{
         
     }else{
     
-        const lastGroup = historymodelfind.history.at(-1)
-        const lastEntry = lastGroup?.at(-1)
+        const lastGroup = historymodelfind.history[0]
+        const lastEntry = lastGroup[0]
+      
         if(lastEntry?.date === date.getDate()){
-            lastGroup.push(logHistory)
+            lastGroup.unshift(logHistory)
         }else{
-            historymodelfind.history.push([logHistory])
+            historymodelfind.history.unshift([logHistory])
         }
         await historymodelfind.save()
      
@@ -62,6 +68,6 @@ exports.logger = async (req,res,next)=>{
       }
       next()
     } catch (error) {
-        console.log("sdf")
+        console.log(error)
     }   
 }

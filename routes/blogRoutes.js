@@ -3,6 +3,7 @@ const { createBlog, getBlogs, getBlogsById ,updateBlogs, deletBlogs, upload, get
 const { authCheck } = require("../middelware/authCheck")
 const { addLike } = require("../controller/userLikes")
 const { logger } = require("../middelware/logger")
+const { gethistory } = require("../controller/userHistory")
 
 
 
@@ -14,19 +15,21 @@ const router = express.Router()
 
 
 //routes for crud operations
-router.post("/post",authCheck,upload.single("file"), createBlog)
+router.post("/post",authCheck,upload.single("file"),logger, createBlog)
 router.get("/get",getBlogs)
-router.post("/getbyid/:id",authCheck, getBlogsById)
+router.post("/getbyid/:id",authCheck,logger, getBlogsById)
 router.put("/update/:id",authCheck,upload.single("file"),logger,updateBlogs)
 router.delete("/delet/:id",authCheck,deletBlogs)
 
 //routes for comments
 router.get("/comments/:id",authCheck,getcomments)
-router.post("/addcomments/:id",authCheck,addcomments)
+router.post("/addcomments/:id",authCheck,logger,addcomments)
 router.delete("/deletcomments/:blogid/:id",authCheck,deletecomments)
 
 //routes for likes
 router.put("/put/:id",authCheck,addLike)
 
+//routes for history
+router.get("/history/:id",gethistory)
 
 module.exports = router
