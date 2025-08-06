@@ -3,6 +3,7 @@ const { connectDb } = require("./config/connectDB")
 const app = express()
 const userrouter = require("./routes/userBloge")
 const blogRouter = require("./routes/blogRoutes")
+const aggregateRouter = require("./routes/aggregation")
 const cors = require("cors")
 require("dotenv").config()
 const port = process.env.PORT
@@ -17,7 +18,8 @@ app.use("/auth", userrouter)
 app.use("/blog",blogRouter)
 
 
-//routes for like
+//routes for aggregationFunction
+app.use("/aggregation",aggregateRouter)
 
 
 connectDb().then(()=>{
