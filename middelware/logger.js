@@ -68,6 +68,6 @@ exports.logger = async (req,res,next)=>{
       }
       next()
     } catch (error) {
-        console.log(error)
+        res.status(404).json({message:"no history found",err:error})
     }   
 }

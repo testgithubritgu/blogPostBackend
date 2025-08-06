@@ -19,7 +19,7 @@ exports.aggregationFunction = async(req,res)=>{
     
     }}])
     // console.log(getUserDetails[0]?.dataa)
-    console.log(getUserDetails)
+   
     res.status(200).json({"message":"ok"})
 }   
 
