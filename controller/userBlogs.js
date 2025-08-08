@@ -136,3 +136,19 @@ exports.deletecomments = async (req, res) => {
         res.status(404).json({ "message": "not found", success: false })
     }
 }
+
+exports.AllUsersBlog = async(req,res)=>{
+    const {id}=  req.user
+    // const getBlogsUserPosted = await blogModel.aggregate([{$group:{_id:"$author",countBlogs:{$sum:1}}}])
+    const getBlogsUserPosted = await userModel.aggregate([{$lookup:{
+        from:"userblogs",
+        localField:"_id",
+        foreignField:"author",
+        as:"allPosts"
+
+    }},{$project:{allPosts:1}}])
+    // const getBlogsUserPosted = await blogModel.find({author:id})
+    console.log(getBlogsUserPosted)
+    res.json({message:"ok",authors:getBlogsUserPosted})
+}
+ 

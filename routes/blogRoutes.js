@@ -1,5 +1,5 @@
 const express = require("express")
-const { createBlog, getBlogs, getBlogsById ,updateBlogs, deletBlogs, upload, getcomments, addcomments, deletecomments} = require("../controller/userBlogs")
+const { createBlog, getBlogs, getBlogsById ,updateBlogs, deletBlogs, upload, getcomments, addcomments, deletecomments, AllUsersBlog} = require("../controller/userBlogs")
 const { authCheck } = require("../middelware/authCheck")
 const { addLike } = require("../controller/userLikes")
 const { logger } = require("../middelware/logger")
@@ -35,6 +35,8 @@ router.post("/allroutes",authCheck,logger,(req,res)=>{
     return res.status(200).json({message:"ok"})
 })
 
+//routes for getBlogByUserId
+router.post("/userblogs",authCheck,AllUsersBlog)
 
 
 
