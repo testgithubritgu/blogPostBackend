@@ -3,6 +3,7 @@ const blogModel = require("../model/blog")
 const userModel = require("../model/user")
 const likeModel = require("../model/like")
 const multer = require('multer')
+const { default: mongoose } = require("mongoose")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './public/images')
@@ -17,7 +18,7 @@ exports.upload = multer({ storage: storage })
 
 exports.createBlog = async (req, res) => {
     const { title, content } = req.body
-   
+
     const author = req.user.id
     const user = await userModel.findById({ _id: author })
     try {
@@ -26,7 +27,7 @@ exports.createBlog = async (req, res) => {
 
         })
         const newLikeModel = await likeModel.create({
-            blogId:newBloge._id
+            blogId: newBloge._id
         })
 
         user.myBlogs.push(newBloge._id)
@@ -58,7 +59,7 @@ exports.getBlogsById = async (req, res) => {
 }
 exports.updateBlogs = async (req, res) => {
     const { id } = req.params
- 
+
     try {
         const blogs = await blog.findById({ _id: id })
 
@@ -69,12 +70,12 @@ exports.updateBlogs = async (req, res) => {
         // if (blogs.author !== req.user.id) {
         //     return res.status(401).json({ message: "unauthorized", success: false })
         // }
-      
+
         blogs.title = req.body.title || blogs.title
         blogs.content = req.body.content || blogs.content
         blogs.blogImage = req.file.filename || blogs.blogImage
         await blogs.save()
-      
+
         return res.status(200).json({ message: "updated succesfully", success: true })
     } catch (error) {
         res.status(500).json({ err: error })
@@ -110,7 +111,7 @@ exports.addcomments = async (req, res) => {
     const { text } = req.body
     try {
         const getcomments = await blogModel.findById(req.params.id)
-  
+
         getcomments.comments.push({ user: name, text })
         await getcomments.save()
         res.status(200).json({ message: "ok", success: true })
@@ -120,13 +121,13 @@ exports.addcomments = async (req, res) => {
 }
 exports.deletecomments = async (req, res) => {
     const name = req.user.name
-    const { id,blogid } = req.params
+    const { id, blogid } = req.params
 
     const idx = req.idx
- 
+
     try {
         const getcomments = await blogModel.findById(blogid)
-       
+
         const commentidx = idx
         getcomments.comments.splice(id, 1);
         await getcomments.save();
@@ -137,18 +138,43 @@ exports.deletecomments = async (req, res) => {
     }
 }
 
-exports.AllUsersBlog = async(req,res)=>{
-    const {id}=  req.user
+exports.AllUsersBlog = async (req, res) => {
+    const { id } = req.user
     // const getBlogsUserPosted = await blogModel.aggregate([{$group:{_id:"$author",countBlogs:{$sum:1}}}])
-    const getBlogsUserPosted = await userModel.aggregate([{$lookup:{
-        from:"userblogs",
-        localField:"_id",
-        foreignField:"author",
-        as:"allPosts"
+    const getBlogsUserPosted = await userModel.aggregate([{
+        $lookup: {
+            from: "userblogs",
+            localField: "_id",
+            foreignField: "author",
+            as: "allPosts"
 
-    }},{$project:{allPosts:1}}])
+        }
+    }, { $project: { "allPosts.title": 1, "allPosts.content": 1, lentOfpost: { $size: "$allPosts" } } }])
     // const getBlogsUserPosted = await blogModel.find({author:id})
     console.log(getBlogsUserPosted)
-    res.json({message:"ok",authors:getBlogsUserPosted})
+    res.json({ message: "ok", authors: getBlogsUserPosted })
 }
- 
+
+
+exports.getBlogsByUserId = async (req, res) => {
+    const { id } = req.user
+    const userId = new mongoose.Types.ObjectId(id)
+
+    const finduser = await userModel.findById({ _id: id })
+
+    if (!finduser) {
+        return res.status(404).json({ message: "user not found", success: false })
+    }
+    try {
+        const joinTwoCollectionAndGetBlogs = await blogModel.aggregate([
+            { $match: { author: userId } },
+            {$group:{_id:"$author",blg:{$push:"$$ROOT"}}}
+
+
+        ])
+        res.status(200).json({ message: "ok", myblogs: joinTwoCollectionAndGetBlogs })
+    } catch (error) {
+        res.status(500).json({ message: "internal server error", success: false })
+    }
+}
+

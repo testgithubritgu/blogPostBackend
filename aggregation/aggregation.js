@@ -14,7 +14,7 @@ exports.aggregationFunction = async(req,res)=>{
             foreignField:"_id",
             as:"authorInfo"
         }},
-        {$unwind:"$authorInfo"},
+      
         {$group:{_id:"$author",blogs:{$push:"$title"}
     
     }}])
